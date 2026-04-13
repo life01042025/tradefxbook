@@ -1,0 +1,25 @@
+{
+  "overview": "A pixel-perfect clone of TradeFXBook — a modern Forex Trading Journal SaaS landing page with dark/light mode toggle, animated stats, glassmorphism card design, pricing tiers, FAQ accordion, and a full contact form.",
+  "features": [
+    "Dark/light mode toggle with smooth transitions",
+    "Animated count-up stats (traders, trades, PnL)",
+    "Glassmorphism feature cards with hover glow effects",
+    "Pricing section with monthly/yearly toggle",
+    "FAQ accordion with smooth expand/collapse",
+    "Scroll-reveal animations throughout",
+    "Dashboard preview with mock PnL and sparkline",
+    "Contact form with validation",
+    "Fully responsive design with Inter font and neon green accents"
+  ],
+  "category": "showcase",
+  "tags": [
+    "landing-page",
+    "forex",
+    "trading",
+    "saas",
+    "dark-mode",
+    "animations",
+    "glassmorphism"
+  ],
+  "last_updated": "2026-04-13T11:07:55.620Z"
+}

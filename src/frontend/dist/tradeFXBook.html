@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeFXBook — The Trading Journal That Works For You</title>
+  <meta name="description" content="Track trades, analyze PnL, and master the markets with TradeFXBook — the professional trading journal with MT5 sync and AI-powered analytics." />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================
+       DESIGN TOKENS
+    ========================================= */
+    :root {
+      --bg:       #0a0a0f;
+      --bg2:      #0f0f1a;
+      --bg3:      #14141f;
+      --card:     rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+      --accent:   #00ff88;
+      --accent2:  #00cc6a;
+      --text:     #f0f0f8;
+      --text2:    #9090a8;
+      --text3:    #5a5a72;
+      --danger:   #ff4466;
+      --success:  #00ff88;
+      --shadow-accent: 0 0 30px rgba(0,255,136,0.18);
+      --shadow-card:   0 8px 32px rgba(0,0,0,0.4);
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    [data-theme="light"] {
+      --bg:       #f8f9fc;
+      --bg2:      #eef0f5;
+      --bg3:      #e4e7ef;
+      --card:     rgba(255,255,255,0.85);
+      --card-border: rgba(0,0,0,0.08);
+      --accent:   #00b860;
+      --accent2:  #009b50;
+      --text:     #0d0d1a;
+      --text2:    #4a4a5e;
+      --text3:    #8888a0;
+      --shadow-accent: 0 0 30px rgba(0,184,96,0.22);
+      --shadow-card:   0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    /* =========================================
+       RESET & BASE
+    ========================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-family: var(--font);
+      font-size: 16px;
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { cursor: pointer; border: none; background: none; font-family: var(--font); }
+    ul, ol { list-style: none; }
+
+    /* =========================================
+       TYPOGRAPHY HELPERS
+    ========================================= */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent) 0%, #00aaff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.25);
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    [data-theme="light"] .section-label {
+      background: rgba(0,184,96,0.1);
+      border-color: rgba(0,184,96,0.25);
+    }
+
+    h1, h2, h3, h4 { font-weight: 800; line-height: 1.15; color: var(--text); }
+    h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -0.02em; }
+    h3 { font-size: 1.25rem; font-weight: 700; }
+    p  { color: var(--text2); }
+
+    /* =========================================
+       LAYOUT
+    ========================================= */
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 100px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 60px;
+    }
+
+    .section-header p {
+      margin-top: 14px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* =========================================
+       BUTTONS
+    ========================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0f;
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--card-border);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-sm {
+      padding: 8px 18px;
+      font-size: 0.85rem;
+    }
+
+    /* =========================================
+       GLASS CARD
+    ========================================= */
+    .card-glass {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+
+    .card-glass:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-accent), var(--shadow-card);
+      border-color: rgba(0,255,136,0.25);
+    }
+
+    [data-theme="light"] .card-glass:hover {
+      border-color: rgba(0,184,96,0.3);
+    }
+
+    /* =========================================
+       SCROLL REVEAL
+    ========================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.from-left  { transform: translateX(-32px); }
+    .reveal.from-right { transform: translateX(32px); }
+    .reveal.visible {
+      opacity: 1;
+      transform: translate(0,0);
+    }
+
+    /* =========================================
+       NAVBAR
+    ========================================= */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      background: rgba(10,10,15,0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    [data-theme="light"] #navbar {
+      background: rgba(248,249,252,0.75);
+    }
+
+    #navbar.scrolled {
+      box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+      border-color: var(--card-border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .nav-logo .fx { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text2);
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Theme toggle */
+    #theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      color: var(--text2);
+      transition: all var(--transition);
+      font-size: 1.1rem;
+    }
+    #theme-toggle:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(0,255,136,0.08);
+    }
+
+    /* Hamburger */
+    #hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+      border-radius: 6px;
+      transition: background var(--transition);
+    }
+    #hamburger:hover { background: var(--card); }
+
+    .ham-line {
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all var(--transition);
+      display: block;
+    }
+    #hamburger.open .ham-line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #hamburger.open .ham-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    #hamburger.open .ham-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile menu */
+    #mobile-menu {
+      display: none;
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--card-border);
+      padding: 20px 24px;
+      z-index: 999;
+      flex-direction: column;
+      gap: 4px;
+      animation: slideDown 0.25s ease;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      color: var(--text2);
+      transition: all var(--transition);
+    }
+    #mobile-menu a:hover { background: var(--card); color: var(--accent); }
+
+    .mobile-cta {
+      margin-top: 8px;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================
+       HERO
+    ========================================= */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 0 80px;
+    }
+
+    /* Animated background orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: orb-float 12s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0,255,136,0.12) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      animation-duration: 14s;
+    }
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,170,255,0.1) 0%, transparent 70%);
+      top: 100px; right: -50px;
+      animation-duration: 11s;
+      animation-delay: -4s;
+    }
+    .orb-3 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(180,0,255,0.07) 0%, transparent 70%);
+      bottom: 0; left: 40%;
+      animation-duration: 16s;
+      animation-delay: -8s;
+    }
+
+    @keyframes orb-float {
+      0%   { transform: translate(0,0) scale(1); }
+      33%  { transform: translate(30px,-20px) scale(1.05); }
+      66%  { transform: translate(-20px,30px) scale(0.97); }
+      100% { transform: translate(20px,10px) scale(1.03); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.25);
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      animation: pulse-border 2s ease-in-out infinite;
+    }
+
+    [data-theme="light"] .hero-badge {
+      background: rgba(0,184,96,0.1);
+      border-color: rgba(0,184,96,0.3);
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.5); opacity: 0.7; }
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
+      50%       { box-shadow: 0 0 0 4px rgba(0,255,136,0.08); }
+    }
+
+    #hero h1 {
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text2);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.75;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      min-width: 180px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .stat-box:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* =========================================
+       DASHBOARD PREVIEW
+    ========================================= */
+    #dashboard {
+      background: var(--bg2);
+      padding: 100px 0;
+    }
+
+    .dashboard-card {
+      background: var(--bg3);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,255,136,0.06);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .dash-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .live-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: live-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes live-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+      50%       { box-shadow: 0 0 0 5px rgba(0,255,136,0); }
+    }
+
+    .dash-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .metric {
+      padding: 20px 24px;
+      border-right: 1px solid var(--card-border);
+    }
+    .metric:last-child { border-right: none; }
+
+    .metric-label {
+      font-size: 0.78rem;
+      color: var(--text3);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .metric-change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .dash-chart {
+      padding: 24px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .chart-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .dash-table {
+      padding: 0;
+    }
+
+    .trade-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 16px;
+      padding: 13px 24px;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      transition: background var(--transition);
+      font-size: 0.88rem;
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .trade-row:hover { background: rgba(255,255,255,0.03); }
+
+    .trade-pair {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .trade-side {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+    .side-buy  { background: rgba(0,255,136,0.12); color: var(--accent); }
+    .side-sell { background: rgba(255,68,102,0.12); color: var(--danger); }
+
+    .trade-time { color: var(--text3); font-size: 0.82rem; }
+
+    .trade-pnl {
+      font-weight: 700;
+      text-align: right;
+    }
+    .pnl-pos { color: var(--accent); }
+    .pnl-neg { color: var(--danger); }
+
+    /* =========================================
+       FEATURES
+    ========================================= */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      padding: 32px 28px;
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(0,255,136,0.3));
+    }
+
+    .feature-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+
+    .check-icon {
+      width: 16px; height: 16px;
+      background: rgba(0,255,136,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--accent);
+    }
+
+    [data-theme="light"] .check-icon { background: rgba(0,184,96,0.15); }
+
+    /* =========================================
+       STATS BAR
+    ========================================= */
+    #stats-bar {
+      background: var(--bg2);
+      padding: 72px 0;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+      text-align: center;
+    }
+
+    .stats-grid .stat-big-number {
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent) 0%, #00aaff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stats-grid .stat-big-label {
+      font-size: 0.9rem;
+      color: var(--text2);
+      font-weight: 500;
+    }
+
+    /* =========================================
+       PRICING
+    ========================================= */
+    #pricing {
+      background: var(--bg2);
+    }
+
+    .pricing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .toggle-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text2);
+      transition: color var(--transition);
+    }
+    .toggle-label.active { color: var(--text); }
+
+    .toggle-switch {
+      width: 50px;
+      height: 27px;
+      background: var(--bg3);
+      border: 1.5px solid var(--card-border);
+      border-radius: 100px;
+      position: relative;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .toggle-switch.on { background: var(--accent); border-color: var(--accent); }
+    .toggle-knob {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 19px;
+      height: 19px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(23px); }
+
+    .save-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0a0a0f;
+      background: var(--accent);
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    [data-theme="light"] .save-badge { color: #fff; background: var(--accent2); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .pricing-card {
+      padding: 36px 30px;
+      position: relative;
+    }
+
+    .pricing-card.popular {
+      border-color: var(--accent) !important;
+      background: rgba(0,255,136,0.04);
+      transform: scale(1.03);
+      box-shadow: 0 0 0 1px var(--accent), var(--shadow-accent), var(--shadow-card) !important;
+    }
+
+    [data-theme="light"] .pricing-card.popular {
+      background: rgba(0,184,96,0.04);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 30px rgba(0,184,96,0.2), var(--shadow-card) !important;
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #0a0a0f;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+
+    [data-theme="light"] .popular-badge { color: #fff; background: var(--accent2); }
+
+    .plan-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .plan-price-block {
+      margin-bottom: 24px;
+    }
+
+    .plan-price {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: var(--text);
+      line-height: 1;
+      transition: all 0.3s ease;
+    }
+
+    .plan-price sup {
+      font-size: 1.3rem;
+      vertical-align: super;
+      font-weight: 700;
+    }
+
+    .plan-period {
+      font-size: 0.82rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .plan-orig-price {
+      font-size: 0.9rem;
+      color: var(--text3);
+      text-decoration: line-through;
+      margin-top: 2px;
+      height: 20px;
+    }
+    .plan-orig-price:empty { display: none; }
+
+    .plan-desc {
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+      line-height: 1.65;
+    }
+
+    .plan-features {
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .plan-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text2);
+    }
+
+    .pf-check { color: var(--accent); font-size: 1rem; font-weight: 700; }
+    .pf-cross  { color: var(--text3); font-size: 1rem; }
+
+    /* =========================================
+       HOW IT WORKS
+    ========================================= */
+    .steps-wrap {
+      position: relative;
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .steps-line {
+      position: absolute;
+      top: 40px;
+      left: calc(16.67% + 20px);
+      right: calc(16.67% + 20px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #00aaff, var(--accent));
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .step-card {
+      flex: 1;
+      max-width: 300px;
+      text-align: center;
+      padding: 32px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(0,255,136,0.1);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin: 0 auto 16px;
+    }
+
+    [data-theme="light"] .step-num { background: rgba(0,184,96,0.1); }
+
+    .step-icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .step-card h3 { margin-bottom: 10px; }
+    .step-card p { font-size: 0.9rem; line-height: 1.65; }
+
+    /* =========================================
+       FAQ
+    ========================================= */
+    #faq {
+      background: var(--bg2);
+    }
+
+    .faq-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+    .faq-item.open {
+      border-color: rgba(0,255,136,0.3);
+    }
+
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      background: none;
+      transition: background var(--transition);
+      type: button;
+    }
+    .faq-q:hover { background: rgba(255,255,255,0.03); }
+
+    .faq-chevron {
+      font-size: 1rem;
+      color: var(--text3);
+      transition: transform var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .faq-a-inner {
+      padding: 0 24px 20px;
+      font-size: 0.9rem;
+      color: var(--text2);
+      line-height: 1.75;
+    }
+
+    /* =========================================
+       CONTACT
+    ========================================= */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .contact-info h3 { margin-bottom: 14px; }
+    .contact-info p { font-size: 0.92rem; line-height: 1.75; margin-bottom: 28px; }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .contact-icon {
+      width: 36px; height: 36px;
+      background: rgba(0,255,136,0.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    [data-theme="light"] .contact-icon { background: rgba(0,184,96,0.1); }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--card);
+      border: 1.5px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.93rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,255,136,0.1);
+    }
+
+    [data-theme="light"] .form-group input,
+    [data-theme="light"] .form-group textarea {
+      background: #fff;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-error {
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: 5px;
+      display: none;
+    }
+
+    .form-group.error input,
+    .form-group.error textarea {
+      border-color: var(--danger);
+    }
+
+    .form-group.error .form-error { display: block; }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .form-success.visible { display: block; }
+
+    .success-icon {
+      width: 64px; height: 64px;
+      background: rgba(0,255,136,0.1);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 16px;
+    }
+
+    .form-success h3 { margin-bottom: 8px; }
+    .form-success p { font-size: 0.92rem; }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--card-border);
+      padding: 72px 0 36px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-brand .nav-logo {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .footer-tagline {
+      font-size: 0.88rem;
+      color: var(--text2);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-link {
+      width: 38px; height: 38px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--text2);
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+    .social-link:hover {
+      background: rgba(0,255,136,0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text2);
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul li a {
+      font-size: 0.88rem;
+      color: var(--text3);
+      transition: color var(--transition);
+    }
+    .footer-col ul li a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      padding-top: 28px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 0.82rem;
+      color: var(--text3);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      font-size: 0.82rem;
+      color: var(--text3);
+      transition: color var(--transition);
+    }
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      #hamburger { display: flex; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+      .pricing-card.popular { transform: scale(1); }
+      .steps-wrap { flex-direction: column; align-items: center; }
+      .steps-line { display: none; }
+      .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-brand { grid-column: span 2; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+      .dash-metrics { grid-template-columns: 1fr; }
+      .metric { border-right: none; border-bottom: 1px solid var(--card-border); }
+      .metric:last-child { border-bottom: none; }
+    }
+
+    @media (max-width: 600px) {
+      section { padding: 72px 0; }
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 14px; }
+      .stat-box { min-width: 140px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-brand { grid-column: span 1; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .trade-row { grid-template-columns: 1fr 1fr; }
+      .trade-time { display: none; }
+    }
+
+    /* =========================================
+       SCROLL TO TOP
+    ========================================= */
+    #scroll-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 44px;
+      height: 44px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #0a0a0f;
+      box-shadow: 0 4px 16px rgba(0,255,136,0.3);
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: all var(--transition);
+      z-index: 200;
+    }
+    #scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #scroll-top:hover { transform: translateY(-3px); }
+  </style>
+</head>
+<body>
+
+<!-- ============= NAVBAR ============= -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Trade<span class="fx">FX</span>Book</a>
+
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#faq">FAQ</a>
+    </div>
+
+    <div class="nav-actions">
+      <button type="button" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">🌙</button>
+      <a href="#contact" class="btn btn-primary btn-sm" data-ocid="nav-cta">Get Started</a>
+      <button type="button" id="hamburger" aria-label="Open menu">
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu">
+  <a href="#features">Features</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#how-it-works">How It Works</a>
+  <a href="#faq">FAQ</a>
+  <div class="mobile-cta">
+    <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center;">Get Started Free →</a>
+  </div>
+</div>
+
+
+<!-- ============= HERO ============= -->
+<section id="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      New — MT5 Real-Time Sync is now live
+    </div>
+
+    <h1>The Trading Journal That <span class="gradient-text">Works For You</span></h1>
+
+    <p class="hero-sub">Track Trades. Analyze PnL. Master Markets.</p>
+
+    <p class="hero-desc">
+      The all-in-one trading journal built for serious traders. Sync your broker, analyze performance with AI, and outpace the market with data-driven insights.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary" data-ocid="hero-cta-primary">Get Started Free →</a>
+      <a href="#dashboard" class="btn btn-outline" data-ocid="hero-cta-demo">View Demo</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-number" id="hero-stat-1">0</div>
+        <div class="stat-label">Active Traders</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="hero-stat-2">0</div>
+        <div class="stat-label">Trades Logged</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="hero-stat-3">$0</div>
+        <div class="stat-label">PnL Tracked</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= DASHBOARD PREVIEW ============= -->
+<section id="dashboard">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">📊 Live Preview</span>
+      <h2>Your Trading Dashboard, <span class="gradient-text">Supercharged</span></h2>
+      <p>Real-time sync with your broker. Full trade history, equity curves, and analytics in one place.</p>
+    </div>
+
+    <div class="dashboard-card reveal">
+      <div class="dash-header">
+        <h3>Portfolio Overview</h3>
+        <div class="live-badge"><span class="live-dot"></span> Live Sync Active</div>
+      </div>
+
+      <div class="dash-metrics">
+        <div class="metric">
+          <div class="metric-label">Today's PnL</div>
+          <div class="metric-value">+$2,847.50 <span class="metric-change">(+12.4%)</span></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Win Rate</div>
+          <div class="metric-value">67.8%</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Open Trades</div>
+          <div class="metric-value">4</div>
+        </div>
+      </div>
+
+      <div class="dash-chart">
+        <div class="chart-title">Equity Curve — Last 30 Days</div>
+        <svg viewBox="0 0 860 140" preserveAspectRatio="none" style="width:100%;height:140px;display:block;">
+          <defs>
+            <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00ff88" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Fill area under curve -->
+          <polygon
+            fill="url(#equityGrad)"
+            points="0,130 30,122 60,115 90,108 120,118 150,105 180,95 210,88 240,98 270,85 300,78 330,70 360,80 390,68 420,58 450,65 480,52 510,45 540,55 570,40 600,32 630,42 660,30 690,22 720,33 750,18 800,10 830,15 860,8  860,140 0,140"
+          />
+          <!-- Curve line -->
+          <polyline
+            fill="none"
+            stroke="#00ff88"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            points="0,130 30,122 60,115 90,108 120,118 150,105 180,95 210,88 240,98 270,85 300,78 330,70 360,80 390,68 420,58 450,65 480,52 510,45 540,55 570,40 600,32 630,42 660,30 690,22 720,33 750,18 800,10 830,15 860,8"
+          />
+          <!-- Latest value dot -->
+          <circle cx="860" cy="8" r="5" fill="#00ff88" opacity="0.9"/>
+        </svg>
+      </div>
+
+      <div class="dash-table">
+        <div class="trade-row" style="opacity:0.55;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding-top:10px;padding-bottom:10px;">
+          <span>Pair</span>
+          <span>Side</span>
+          <span>Time</span>
+          <span style="text-align:right">PnL</span>
+        </div>
+        <div class="trade-row" data-ocid="trade-row-1">
+          <span class="trade-pair">EUR/USD</span>
+          <span class="trade-side side-buy">BUY</span>
+          <span class="trade-time">09:14 AM</span>
+          <span class="trade-pnl pnl-pos">+$840.00</span>
+        </div>
+        <div class="trade-row" data-ocid="trade-row-2">
+          <span class="trade-pair">GBP/JPY</span>
+          <span class="trade-side side-sell">SELL</span>
+          <span class="trade-time">10:32 AM</span>
+          <span class="trade-pnl pnl-pos">+$1,120.00</span>
+        </div>
+        <div class="trade-row" data-ocid="trade-row-3">
+          <span class="trade-pair">USD/CAD</span>
+          <span class="trade-side side-buy">BUY</span>
+          <span class="trade-time">11:55 AM</span>
+          <span class="trade-pnl pnl-neg">-$300.00</span>
+        </div>
+        <div class="trade-row" data-ocid="trade-row-4">
+          <span class="trade-pair">XAU/USD</span>
+          <span class="trade-side side-buy">BUY</span>
+          <span class="trade-time">01:08 PM</span>
+          <span class="trade-pnl pnl-pos">+$1,187.50</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= FEATURES ============= -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">⚙️ Features</span>
+      <h2>Everything You Need to <span class="gradient-text">Trade Smarter</span></h2>
+      <p>Professional-grade tools built for discretionary, algorithmic, and hybrid traders.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.05s">
+        <span class="feature-icon">📈</span>
+        <h3>Strategy Backtesting</h3>
+        <p>Replay your exact strategy across any historical period. See what works before risking real capital.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Historical replay engine</li>
+          <li><span class="check-icon">✓</span> Custom parameter sweeps</li>
+          <li><span class="check-icon">✓</span> Walk-forward optimization</li>
+        </ul>
+      </div>
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.1s">
+        <span class="feature-icon">📓</span>
+        <h3>Trade Journaling</h3>
+        <p>Log every trade with screenshots, notes, and emotions. Build an unbeatable edge through reflection.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Screenshot attachments</li>
+          <li><span class="check-icon">✓</span> Emotion tagging</li>
+          <li><span class="check-icon">✓</span> Multi-account support</li>
+        </ul>
+      </div>
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.15s">
+        <span class="feature-icon">📊</span>
+        <h3>Powerful Analytics</h3>
+        <p>Equity curves, drawdown charts, session heatmaps, and correlation matrices — all in real time.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Equity curve analysis</li>
+          <li><span class="check-icon">✓</span> Session heatmaps</li>
+          <li><span class="check-icon">✓</span> Drawdown visualizer</li>
+        </ul>
+      </div>
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.2s">
+        <span class="feature-icon">⚡</span>
+        <h3>MT5 Real-Time Sync</h3>
+        <p>Connect your MetaTrader 5 account once and have all trades imported automatically in seconds.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Automatic import</li>
+          <li><span class="check-icon">✓</span> All major brokers</li>
+          <li><span class="check-icon">✓</span> Live P&L streaming</li>
+        </ul>
+      </div>
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.25s">
+        <span class="feature-icon">🤖</span>
+        <h3>AI-Powered Reports</h3>
+        <p>Get weekly AI-generated insights highlighting your strengths, weaknesses, and improvement areas.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Weekly AI digest</li>
+          <li><span class="check-icon">✓</span> Pattern recognition</li>
+          <li><span class="check-icon">✓</span> Personalized coaching</li>
+        </ul>
+      </div>
+
+      <div class="card-glass feature-card reveal" style="transition-delay:0.3s">
+        <span class="feature-icon">🏆</span>
+        <h3>Community & Leaderboard</h3>
+        <p>Join thousands of traders, share strategies anonymously, and climb the monthly performance board.</p>
+        <ul class="feature-list">
+          <li><span class="check-icon">✓</span> Global leaderboard</li>
+          <li><span class="check-icon">✓</span> Strategy sharing</li>
+          <li><span class="check-icon">✓</span> Weekly challenges</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= STATS BAR ============= -->
+<div id="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="reveal">
+        <div class="stat-big-number" data-count-to="12400" data-suffix="+" data-count-id="stat-traders">0+</div>
+        <div class="stat-big-label">Active Traders</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s">
+        <div class="stat-big-number" data-count-to="847000" data-suffix="K+" data-count-id="stat-trades">0K+</div>
+        <div class="stat-big-label">Trades Analyzed</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s">
+        <div class="stat-big-number" data-count-to="678" data-decimals="1" data-suffix="%" data-count-id="stat-winrate">0%</div>
+        <div class="stat-big-label">Avg Win Rate</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.3s">
+        <div class="stat-big-number" data-count-to="49" data-decimals="1" data-suffix="★" data-count-id="stat-rating">0★</div>
+        <div class="stat-big-label">User Rating</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============= PRICING ============= -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">💳 Pricing</span>
+      <h2>Simple, <span class="gradient-text">Transparent Pricing</span></h2>
+      <p>Start free and upgrade when you're ready. No hidden fees, no lock-in contracts.</p>
+    </div>
+
+    <div class="pricing-toggle reveal">
+      <span class="toggle-label active" id="monthly-label">Monthly</span>
+      <div class="toggle-switch" id="billing-toggle" role="switch" aria-checked="false" tabindex="0" data-ocid="billing-toggle">
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label" id="yearly-label">Yearly</span>
+      <span class="save-badge">Save 17%</span>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Free -->
+      <div class="card-glass pricing-card reveal" data-ocid="plan-free">
+        <div class="plan-name">Free</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>$</sup><span id="price-free">0</span></div>
+          <div class="plan-period">forever</div>
+          <div class="plan-orig-price" id="orig-free"></div>
+        </div>
+        <p class="plan-desc">Perfect for beginners exploring their first trading journal.</p>
+        <ul class="plan-features">
+          <li class="plan-feature"><span class="pf-check">✓</span> Up to 50 trades/month</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Basic analytics</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Manual trade entry</li>
+          <li class="plan-feature"><span class="pf-cross">✕</span> MT5 sync</li>
+          <li class="plan-feature"><span class="pf-cross">✕</span> AI reports</li>
+          <li class="plan-feature"><span class="pf-cross">✕</span> Community access</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline" style="width:100%;justify-content:center;" data-ocid="cta-free">Get Started Free</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="card-glass pricing-card popular reveal" style="transition-delay:0.1s" data-ocid="plan-pro">
+        <div class="popular-badge">⭐ Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>$</sup><span id="price-pro">29</span></div>
+          <div class="plan-period" id="period-pro">per month</div>
+          <div class="plan-orig-price" id="orig-pro"></div>
+        </div>
+        <p class="plan-desc">The full toolkit for active traders who want a real edge.</p>
+        <ul class="plan-features">
+          <li class="plan-feature"><span class="pf-check">✓</span> Unlimited trades</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Advanced analytics</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> MT5 Real-Time Sync</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> AI weekly reports</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Community access</li>
+          <li class="plan-feature"><span class="pf-cross">✕</span> White-label dashboard</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center;" data-ocid="cta-pro">Start Pro Trial</a>
+      </div>
+
+      <!-- Elite -->
+      <div class="card-glass pricing-card reveal" style="transition-delay:0.2s" data-ocid="plan-elite">
+        <div class="plan-name">Elite</div>
+        <div class="plan-price-block">
+          <div class="plan-price"><sup>$</sup><span id="price-elite">59</span></div>
+          <div class="plan-period" id="period-elite">per month</div>
+          <div class="plan-orig-price" id="orig-elite"></div>
+        </div>
+        <p class="plan-desc">For professional traders, prop firms, and trading teams.</p>
+        <ul class="plan-features">
+          <li class="plan-feature"><span class="pf-check">✓</span> Everything in Pro</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Team workspaces (5 seats)</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> White-label dashboard</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Priority AI insights</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> Dedicated manager</li>
+          <li class="plan-feature"><span class="pf-check">✓</span> API access</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline" style="width:100%;justify-content:center;" data-ocid="cta-elite">Contact Sales</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= HOW IT WORKS ============= -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">🗺️ Process</span>
+      <h2>Up and Running in <span class="gradient-text">3 Steps</span></h2>
+      <p>Connect your broker, start logging, and watch your performance transform.</p>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="steps-line"></div>
+
+      <div class="card-glass step-card reveal from-left">
+        <div class="step-num">01</div>
+        <span class="step-icon">🔗</span>
+        <h3>Connect</h3>
+        <p>Link your MT5/MT4 broker account via our secure API. Works with 150+ brokers worldwide in under 2 minutes.</p>
+      </div>
+
+      <div class="card-glass step-card reveal">
+        <div class="step-num">02</div>
+        <span class="step-icon">📝</span>
+        <h3>Track</h3>
+        <p>Every trade syncs automatically. Add notes, screenshots, and emotion tags to build your personal playbook.</p>
+      </div>
+
+      <div class="card-glass step-card reveal from-right">
+        <div class="step-num">03</div>
+        <span class="step-icon">🚀</span>
+        <h3>Improve</h3>
+        <p>Review AI-generated insights, spot patterns, fix weaknesses, and watch your win rate climb week over week.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= FAQ ============= -->
+<section id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">❓ FAQ</span>
+      <h2>Frequently Asked <span class="gradient-text">Questions</span></h2>
+      <p>Everything you need to know about TradeFXBook.</p>
+    </div>
+
+    <div class="faq-list">
+
+      <div class="faq-item reveal" data-ocid="faq-1">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          Which brokers are supported for MT5 sync?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            TradeFXBook supports over 150 MT5-compatible brokers worldwide, including IC Markets, Pepperstone, OANDA, Forex.com, IG, and many more. If your broker provides MT5 access, it will work. You can also import trades manually from any broker via CSV.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal" style="transition-delay:0.05s" data-ocid="faq-2">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          How is my trading data kept secure?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We use read-only API keys — TradeFXBook can never place or modify trades on your behalf. Your data is stored in ISO 27001-certified data centers and we undergo regular third-party security audits.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal" style="transition-delay:0.1s" data-ocid="faq-3">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          How does MT5 real-time sync work exactly?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            You install a lightweight MT5 Expert Advisor (EA) that we provide. It runs on your terminal and pushes trade data to our servers every few seconds via a read-only, encrypted webhook. There's nothing to configure beyond a single API key — setup takes under 3 minutes.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal" style="transition-delay:0.15s" data-ocid="faq-4">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          Can I cancel my subscription at any time?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Absolutely. There are no lock-in contracts. You can cancel Pro or Elite from your account settings at any time and you'll retain access until the end of your current billing period. We also offer a 14-day money-back guarantee — no questions asked.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal" style="transition-delay:0.2s" data-ocid="faq-5">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          What does the AI analysis actually cover?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            The AI analyzes your trade history every week and generates a personalized report covering: your best and worst trading sessions, instrument correlations, time-of-day performance, emotional patterns inferred from trade notes, risk-adjusted return, and specific tactical recommendations. Elite users receive daily snapshots.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal" style="transition-delay:0.25s" data-ocid="faq-6">
+        <button type="button" class="faq-q" onclick="toggleFAQ(this)">
+          Is there a free trial for Pro or Elite?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Yes! Both Pro and Elite plans come with a 14-day free trial — no credit card required. You get full access to every feature during the trial period. After 14 days, you choose whether to subscribe or downgrade to the free plan. We'll remind you 3 days before the trial ends.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= CONTACT ============= -->
+<section id="contact">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">✉️ Contact</span>
+      <h2>Get in <span class="gradient-text">Touch</span></h2>
+      <p>Have questions? Our team responds within 24 hours.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="reveal from-left">
+        <h3>Talk to the team</h3>
+        <p>Whether you're exploring TradeFXBook for the first time or you're a Pro user with a specific request, we'd love to hear from you.</p>
+        <div class="contact-detail">
+          <div class="contact-icon">📧</div>
+          <span>support@tradefxbook.com</span>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">💬</div>
+          <span>Live chat — Mon to Fri, 9am–6pm UTC</span>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">🌍</div>
+          <span>Serving traders in 70+ countries</span>
+        </div>
+      </div>
+
+      <div class="card-glass" style="padding:36px;" class="reveal">
+        <form id="contact-form" novalidate data-ocid="contact-form">
+          <div class="form-group" id="fg-name">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="John Doe" autocomplete="name" data-ocid="input-name" />
+            <div class="form-error">Please enter your full name.</div>
+          </div>
+          <div class="form-group" id="fg-email">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="john@example.com" autocomplete="email" data-ocid="input-email" />
+            <div class="form-error">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group" id="fg-message">
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Tell us how we can help..." data-ocid="input-message"></textarea>
+            <div class="form-error">Please write a message (at least 10 characters).</div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" data-ocid="submit-contact">Send Message →</button>
+        </form>
+        <div class="form-success" id="form-success">
+          <div class="success-icon">✓</div>
+          <h3>Message Sent!</h3>
+          <p>Thanks for reaching out. We'll get back to you within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============= FOOTER ============= -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Trade<span class="fx">FX</span>Book</a>
+        <p class="footer-tagline">The professional trading journal built to help you track, analyze, and systematically improve your trading performance.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Twitter/X">𝕏</a>
+          <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-link" aria-label="Discord">🎮</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#dashboard">Dashboard</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Status Page</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">API Docs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">GDPR</a></li>
+          <li><a href="#">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 TradeFXBook. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button type="button" id="scroll-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+
+<!-- ============= JAVASCRIPT ============= -->
+<script>
+(function() {
+  'use strict';
+
+  /* ---- THEME ---- */
+  var html = document.documentElement;
+  var themeBtn = document.getElementById('theme-toggle');
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('tfx-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content',
+      theme === 'dark' ? '#0a0a0f' : '#f8f9fc');
+  }
+
+  (function initTheme() {
+    var saved = localStorage.getItem('tfx-theme') || 'dark';
+    setTheme(saved);
+  })();
+
+  themeBtn.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ---- NAVBAR SCROLL ---- */
+  var navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 20) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+    // Scroll-to-top button
+    var scrollTopBtn = document.getElementById('scroll-top');
+    if (window.scrollY > 600) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  /* ---- MOBILE MENU ---- */
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobile-menu');
+
+  hamburger.addEventListener('click', function() {
+    var isOpen = mobileMenu.classList.contains('open');
+    hamburger.classList.toggle('open', !isOpen);
+    mobileMenu.classList.toggle('open', !isOpen);
+  });
+
+  // Close on link click
+  mobileMenu.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    });
+  });
+
+  /* ---- EASE-OUT CUBIC ---- */
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  /* ---- COUNT-UP FUNCTION ---- */
+  function animateCountUp(el, target, duration, decimals, suffix, formatFn) {
+    var start = null;
+    function tick(ts) {
+      if (!start) start = ts;
+      var elapsed = ts - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = easeOutCubic(progress);
+      var current = eased * target;
+      if (typeof formatFn === 'function') {
+        el.textContent = formatFn(current, progress >= 1);
+      } else if (decimals) {
+        var val = (current / Math.pow(10, decimals)).toFixed(decimals);
+        el.textContent = val + (suffix || '');
+      } else {
+        el.textContent = Math.floor(current).toLocaleString() + (suffix || '');
+      }
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ---- HERO STATS COUNT-UP ---- */
+  setTimeout(function() {
+    // +12,400 Traders
+    animateCountUp(document.getElementById('hero-stat-1'), 12400, 2000, 0, '', function(v, done) {
+      return '+' + Math.floor(v).toLocaleString();
+    });
+    // +847K Trades
+    animateCountUp(document.getElementById('hero-stat-2'), 847, 2200, 0, '', function(v, done) {
+      return '+' + Math.floor(v) + 'K';
+    });
+    // $2.4M PnL
+    animateCountUp(document.getElementById('hero-stat-3'), 24, 2400, 0, '', function(v, done) {
+      return '$' + (v / 10).toFixed(1) + 'M+';
+    });
+  }, 600);
+
+  /* ---- SCROLL REVEAL ---- */
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  /* ---- STATS BAR COUNT-UP (IntersectionObserver) ---- */
+  var statsObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      statsObserver.unobserve(el);
+      var countTo = parseInt(el.getAttribute('data-count-to'), 10);
+      var suffix  = el.getAttribute('data-suffix') || '';
+      var decimals = el.getAttribute('data-decimals') ? parseInt(el.getAttribute('data-decimals'), 10) : 0;
+      var countId = el.getAttribute('data-count-id');
+
+      if (countId === 'stat-traders') {
+        animateCountUp(el, countTo, 2000, 0, '', function(v) {
+          return Math.floor(v).toLocaleString() + '+';
+        });
+      } else if (countId === 'stat-trades') {
+        animateCountUp(el, 847, 2200, 0, '', function(v) {
+          return Math.floor(v) + 'K+';
+        });
+      } else if (countId === 'stat-winrate') {
+        // target=678, divide by 10 → 67.8%
+        animateCountUp(el, 678, 2000, 0, '', function(v) {
+          return (v / 10).toFixed(1) + '%';
+        });
+      } else if (countId === 'stat-rating') {
+        // target=49, divide by 10 → 4.9★
+        animateCountUp(el, 49, 2000, 0, '', function(v) {
+          return (v / 10).toFixed(1) + '★';
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('[data-count-id]').forEach(function(el) {
+    statsObserver.observe(el);
+  });
+
+  /* ---- PRICING TOGGLE ---- */
+  var isYearly = false;
+  var billingToggle = document.getElementById('billing-toggle');
+  var monthlyLabel  = document.getElementById('monthly-label');
+  var yearlyLabel   = document.getElementById('yearly-label');
+
+  function animatePrice(el, newValue) {
+    el.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-6px)';
+    setTimeout(function() {
+      el.textContent = newValue;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 180);
+  }
+
+  function updatePricing() {
+    var priceProEl   = document.getElementById('price-pro');
+    var priceEliteEl = document.getElementById('price-elite');
+    var origProEl    = document.getElementById('orig-pro');
+    var origEliteEl  = document.getElementById('orig-elite');
+    var periodProEl  = document.getElementById('period-pro');
+    var periodEliteEl = document.getElementById('period-elite');
+
+    if (isYearly) {
+      animatePrice(priceProEl, '24');
+      animatePrice(priceEliteEl, '49');
+      origProEl.textContent  = '$29/mo';
+      origEliteEl.textContent = '$59/mo';
+      periodProEl.textContent  = 'per month, billed yearly';
+      periodEliteEl.textContent = 'per month, billed yearly';
+    } else {
+      animatePrice(priceProEl, '29');
+      animatePrice(priceEliteEl, '59');
+      origProEl.textContent  = '';
+      origEliteEl.textContent = '';
+      periodProEl.textContent  = 'per month';
+      periodEliteEl.textContent = 'per month';
+    }
+  }
+
+  billingToggle.addEventListener('click', function() {
+    isYearly = !isYearly;
+    billingToggle.classList.toggle('on', isYearly);
+    billingToggle.setAttribute('aria-checked', String(isYearly));
+    monthlyLabel.classList.toggle('active', !isYearly);
+    yearlyLabel.classList.toggle('active', isYearly);
+    updatePricing();
+  });
+
+  billingToggle.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      billingToggle.click();
+    }
+  });
+
+  /* ---- FAQ ACCORDION ---- */
+  window.toggleFAQ = function(btn) {
+    var item = btn.closest('.faq-item');
+    var wasOpen = item.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(function(openItem) {
+      openItem.classList.remove('open');
+      openItem.querySelector('.faq-a').style.maxHeight = null;
+    });
+
+    // Open clicked if it was closed
+    if (!wasOpen) {
+      item.classList.add('open');
+      var answer = item.querySelector('.faq-a');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  };
+
+  /* ---- CONTACT FORM ---- */
+  var contactForm = document.getElementById('contact-form');
+  var formSuccess = document.getElementById('form-success');
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function setError(groupId, hasError) {
+    var group = document.getElementById(groupId);
+    if (hasError) {
+      group.classList.add('error');
+    } else {
+      group.classList.remove('error');
+    }
+    return hasError;
+  }
+
+  // Inline validation on blur
+  document.getElementById('name').addEventListener('blur', function() {
+    setError('fg-name', this.value.trim().length < 2);
+  });
+  document.getElementById('email').addEventListener('blur', function() {
+    setError('fg-email', !validateEmail(this.value.trim()));
+  });
+  document.getElementById('message').addEventListener('blur', function() {
+    setError('fg-message', this.value.trim().length < 10);
+  });
+
+  contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name    = document.getElementById('name').value.trim();
+    var email   = document.getElementById('email').value.trim();
+    var message = document.getElementById('message').value.trim();
+
+    var hasErr = false;
+    if (setError('fg-name',    name.length < 2))        hasErr = true;
+    if (setError('fg-email',   !validateEmail(email)))   hasErr = true;
+    if (setError('fg-message', message.length < 10))     hasErr = true;
+
+    if (!hasErr) {
+      contactForm.style.display = 'none';
+      formSuccess.classList.add('visible');
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
